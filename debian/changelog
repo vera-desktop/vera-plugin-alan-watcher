@@ -1,3 +1,9 @@
+vera-plugin-alan-watcher (1.0.0-4) devel; urgency=medium
+
+  * Removed nala0 dependency, it *should* now be handled automatically.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Tue, 15 Jul 2014 01:45:20 +0200
+
 vera-plugin-alan-watcher (1.0.0-3) devel; urgency=medium
 
   * Depend on nala0 (FIXME: should really fix this)
