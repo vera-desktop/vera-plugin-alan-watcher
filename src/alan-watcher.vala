@@ -93,8 +93,13 @@ namespace AlanWatcherPlugin {
 			reconfigure_openbox();
 		}
 		
-		private void init(Display display) {
-			/** Hello! **/
+		private void init(Display display) {}
+		
+		private void startup(StartupPhase phase) {
+			/** startup **/
+			
+			if (phase != StartupPhase.OTHER)
+				return;
 			
 			this.queueh = new QueueHandler(queue);
 			
@@ -135,14 +140,6 @@ namespace AlanWatcherPlugin {
 				
 				reconfigure_openbox();
 			}
-		
-		}
-		
-		private void startup(StartupPhase phase) {
-			/** startup **/
-			
-			if (phase != StartupPhase.OTHER)
-				return;
 			
 			// Parse watchers
 			try {
