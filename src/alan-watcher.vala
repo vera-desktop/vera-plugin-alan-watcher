@@ -203,6 +203,9 @@ namespace AlanWatcherPlugin {
 							}
 						}
 					}
+					/* Watch theme changes */
+					this.watch_setting(app, "org.semplicelinux.vera.settings", "icon-theme-name");
+					this.watch_setting(app, "org.semplicelinux.vera.settings", "theme-name");
 
 					// Check for timer
 					if (watcher.has_key("nala", "timer")) {
