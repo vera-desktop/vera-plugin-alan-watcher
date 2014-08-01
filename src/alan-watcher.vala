@@ -50,7 +50,7 @@ namespace AlanWatcherPlugin {
 		Nala.Queue queue = new Nala.Queue(3);
 		QueueHandler queueh;
 		Gee.HashMap<string, Nala.Application> applications_objects = new Gee.HashMap<string, Nala.Application>();
-
+		HashTable<string, Settings> settings_objects = new HashTable<string, Settings>(str_hash, str_equal);
 
 		private void reconfigure_openbox() {
 			/** Reconfigures openbox. **/
@@ -91,6 +91,34 @@ namespace AlanWatcherPlugin {
 			}
 			
 			reconfigure_openbox();
+		}
+		
+		private void watch_setting(Nala.Application app, string schema, string? setting = null) {
+			/**
+			 * Watches a setting in dconf.
+			*/
+						
+			if (!this.settings_objects.contains(schema)) {
+				/* Add Settings object for the schema */
+				this.settings_objects.set(schema, new Settings(schema));
+			}
+			
+			if (setting == null) {
+				/* Connect every settings */
+				this.settings_objects.get(schema).changed.connect(
+					() => {
+						update_menu_simple(app);
+					}
+				);
+			} else {
+				/* Connect only specified setting */
+				this.settings_objects.get(schema).changed[setting].connect(
+					() => {
+						update_menu_simple(app);
+					}
+				);
+			}
+			
 		}
 		
 		private void init(Display display) {}
@@ -163,6 +191,18 @@ namespace AlanWatcherPlugin {
 
 					// Generate application
 					Nala.Application app = new Nala.Application(application, files);
+					
+					/* Check for gsettings */
+					if (watcher.has_key("nala", "gsettings")) {
+						foreach (string gsetting in watcher.get_string("nala", "gsettings").split(" ")) {
+							if (":" in gsetting) {
+								string[] splt = gsetting.split(":");
+								this.watch_setting(app, splt[0], splt[1]);
+							} else {
+								this.watch_setting(app, gsetting);
+							}
+						}
+					}
 
 					// Check for timer
 					if (watcher.has_key("nala", "timer")) {
