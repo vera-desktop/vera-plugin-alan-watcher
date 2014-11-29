@@ -183,6 +183,11 @@ namespace AlanWatcherPlugin {
 				var watcher_enumerator = watcher_directory.enumerate_children(FileAttribute.STANDARD_NAME, 0);
 				FileInfo file_info;
 				while ((file_info = watcher_enumerator.next_file()) != null) {
+					
+					if (!(file_info.get_name().has_suffix(".watcher")))
+						/* Ensure the file we load ends with .watcher */
+						continue;
+					
 					KeyFile watcher = new KeyFile();
 					watcher.load_from_file("/etc/alan/watchers/" + file_info.get_name(), KeyFileFlags.NONE);
 					string application = watcher.get_string("nala", "application");				
