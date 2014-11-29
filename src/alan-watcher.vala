@@ -51,6 +51,7 @@ namespace AlanWatcherPlugin {
 		QueueHandler queueh;
 		Gee.HashMap<string, Nala.Application> applications_objects = new Gee.HashMap<string, Nala.Application>();
 		HashTable<string, Settings> settings_objects = new HashTable<string, Settings>(str_hash, str_equal);
+		HashTable<Nala.Application, string> custom_commands = new HashTable<Nala.Application, string>(direct_hash, direct_equal);
 
 		private void reconfigure_openbox() {
 			/** Reconfigures openbox. **/
@@ -67,30 +68,37 @@ namespace AlanWatcherPlugin {
 			/** Called when the queue timeout finishes. This method updates the menu. **/
 
 			foreach(Nala.Application app in apps) {
-				message("Regenerating %s\n", app.path);
-				
-				try {
-					Process.spawn_command_line_sync("alan-menu-updater -p vera -i ~/.config/vera " + app.path);
-				} catch (SpawnError e) {
-					warning("ERROR: Unable to update menu: %s\n", e.message);
-				}
+				this.update_menu_simple(app, false);
 			}
 			
-			reconfigure_openbox();
+			this.reconfigure_openbox();
 		}
 		
-		private void update_menu_simple(Nala.Application app) {
+		private void update_menu_simple(Nala.Application app, bool reconfigure = true) {
 			/** Do what update_menu() does, in a simple single way. **/
 			
 			message("Regenerating %s\n", app.path);
 			
 			try {
-				Process.spawn_command_line_sync("alan-menu-updater -p vera -i ~/.config/vera " + app.path);
+				
+				string command;
+				if (this.custom_commands.contains(app)) {
+					/* Use custom command */
+					command = this.custom_commands.get(app);
+				} else {
+					command = "alan-menu-updater -p vera -i ~/.config/vera " + app.path;
+				}
+				
+				Process.spawn_command_line_sync(command);
+				
 			} catch (SpawnError e) {
+				
 				warning("ERROR: Unable to update menu: %s\n", e.message);
+				
 			}
 			
-			reconfigure_openbox();
+			if (reconfigure)
+				this.reconfigure_openbox();
 		}
 		
 		private void watch_setting(Nala.Application app, string schema, string? setting = null) {
@@ -192,6 +200,11 @@ namespace AlanWatcherPlugin {
 					// Generate application
 					Nala.Application app = new Nala.Application(application, files);
 					
+					/* Custom command? */
+					if (watcher.has_key("nala", "custom_command")) {
+						this.custom_commands.set(app, watcher.get_string("nala", "custom_command"));
+					}
+					
 					/* Check for gsettings */
 					if (watcher.has_key("nala", "gsettings")) {
 						foreach (string gsetting in watcher.get_string("nala", "gsettings").split(" ")) {
@@ -204,8 +217,10 @@ namespace AlanWatcherPlugin {
 						}
 					}
 					/* Watch theme changes */
-					this.watch_setting(app, "org.semplicelinux.vera.settings", "icon-theme-name");
-					this.watch_setting(app, "org.semplicelinux.vera.settings", "theme-name");
+					if (!watcher.has_key("nala", "no_theme_triggers") || !watcher.get_boolean("nala", "no_theme_triggers")) {
+						this.watch_setting(app, "org.semplicelinux.vera.settings", "icon-theme-name");
+						this.watch_setting(app, "org.semplicelinux.vera.settings", "theme-name");
+					}
 
 					// Check for timer
 					if (watcher.has_key("nala", "timer")) {
