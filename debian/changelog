@@ -1,3 +1,11 @@
+vera-plugin-alan-watcher (1.0.3-1) devel; urgency=medium
+
+  * Added support for custom commands and the capability to not connect to theme changes.
+  * Ensure that the file to load ends with .watcher.
+  * debian/control: switch to valac-0.26
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Sat, 29 Nov 2014 18:01:26 +0100
+
 vera-plugin-alan-watcher (1.0.2-1) devel; urgency=medium
 
   * Added the capability to watch a gsetting domain,
