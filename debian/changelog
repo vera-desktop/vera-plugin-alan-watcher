@@ -1,3 +1,10 @@
+vera-plugin-alan-watcher (1.0.4-1) unstable; urgency=medium
+
+  * [alan-watcher] Rebuild menus if the locale-changed stamp is found
+  * [alan-watcher] Use valac-0.28.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Sat, 11 Jul 2015 00:14:04 +0200
+
 vera-plugin-alan-watcher (1.0.3-2) unstable; urgency=medium
 
   * Transition to semplice-current.
