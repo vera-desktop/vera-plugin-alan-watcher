@@ -261,6 +261,21 @@ namespace AlanWatcherPlugin {
 					pool.add_watchers(app.triggers);
 					queue.add_application(app);
 				}
+				
+				/* Should trigger a rebuild due to locale change? */
+				File locale_stamp = File.new_for_path("%s/.alan2-locale-changed".printf(Environment.get_home_dir()));
+				if (locale_stamp.query_exists()) {
+					foreach (Nala.Application app in applications_objects.values) {
+						update_menu_simple(app, false);
+					}
+					
+					reconfigure_openbox();
+					
+					try {
+						locale_stamp.delete();
+					} catch (Error e) {}
+				}
+				
 			} catch (Error e) {
 				warning("ERROR: Unable to access to the watchers directory.");
 			}
