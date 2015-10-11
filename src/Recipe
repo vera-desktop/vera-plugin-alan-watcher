@@ -25,7 +25,7 @@ libraries.alan-watcher {
 	compile-flags = -O2 -flto
 	link-flags = -flto -Wl,--as-needed
 	
-	vala-packages = gee-1.0 gio-2.0 libpeas-1.0 nala vera gdk-3.0 x11
-	packages = gee-1.0 gio-2.0 libpeas-1.0 nala vera
+	vala-packages = gee-0.8 gio-2.0 libpeas-1.0 nala vera gdk-3.0 x11
+	packages = gee-0.8 gio-2.0 libpeas-1.0 nala vera
 
 }
