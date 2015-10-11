@@ -21,6 +21,6 @@
 
 project {
 	name = vera-plugin-alan-watcher
-	version = 1.0.4
+	version = 1.0.5
 	minimum-bake-version = 0.1
 }
